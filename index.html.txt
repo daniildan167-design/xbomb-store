@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>XBomb — Игры для Xbox и PC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+        body {
+            background: #0b0e11;
+            color: #e8edf0;
+            min-height: 100vh;
+        }
+        a { color: #1ed760; text-decoration: none; }
+
+        /* ---------- ШАПКА ---------- */
+        header {
+            background: linear-gradient(145deg, #10171a, #1a2428);
+            padding: 14px 30px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            border-bottom: 2px solid #1ed760;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.7);
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+        .logo span { color: #1ed760; }
+        .logo small {
+            display: block;
+            font-size: 11px;
+            font-weight: 400;
+            color: #7a9a9a;
+            letter-spacing: 1.5px;
+        }
+        .header-center {
+            display: flex;
+            flex: 1;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            max-width: 700px;
+        }
+        .search-box {
+            display: flex;
+            background: #1a2629;
+            border-radius: 40px;
+            border: 1px solid #2a3a3e;
+            flex: 1;
+            min-width: 160px;
+            overflow: hidden;
+        }
+        .search-box input {
+            background: transparent;
+            border: none;
+            padding: 10px 18px;
+            color: #e8edf0;
+            font-size: 14px;
+            flex: 1;
+            outline: none;
+        }
+        .search-box input::placeholder { color: #6a8a8a; }
+        .search-box button {
+            background: #1ed760;
+            border: none;
+            color: #0b0e11;
+            font-weight: 700;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+        .search-box button:hover { background: #17b84a; }
+
+        .currency-select {
+            background: #1a2629;
+            border: 1px solid #2a3a3e;
+            border-radius: 30px;
+            padding: 8px 14px;
+            color: #e8edf0;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+        }
+        .currency-select option { background: #0b0e11; }
+
+        .header-tagline {
+            font-size: 13px;
+            color: #8aaaaa;
+            border-left: 2px solid #1ed760;
+            padding-left: 14px;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+            max-width: 280px;
+        }
+        .header-tagline strong { color: #1ed760; }
+
+        /* ---------- НАВИГАЦИЯ (жанры) ---------- */
+        .nav-genres {
+            background: #10171a;
+            padding: 10px 30px;
+            border-bottom: 1px solid #1a2428;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 18px;
+            overflow-x: auto;
+            align-items: center;
+        }
+        .nav-genres span {
+            color: #6a8a8a;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .nav-genres a {
+            color: #b0c8c8;
+            font-size: 13px;
+            padding: 4px 0;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .nav-genres a:hover,
+        .nav-genres a.active {
+            color: #1ed760;
+            border-bottom-color: #1ed760;
+        }
+
+        /* ---------- ФИЛЬТРЫ ---------- */
+        .filter-bar {
+            background: #10171a;
+            padding: 12px 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 20px;
+            align-items: center;
+            border-bottom: 1px solid #1a2428;
+        }
+        .filter-bar select,
+        .filter-bar .sort-btn {
+            background: #1a2629;
+            border: 1px solid #2a3a3e;
+            color: #e8edf0;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            outline: none;
+        }
+        .filter-bar select:hover,
+        .filter-bar .sort-btn:hover { border-color: #1ed760; }
+        .filter-bar .reset-btn {
+            background: transparent;
+            border: 1px solid #4a5a5a;
+            color: #8aaaaa;
+            padding: 7px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+        .filter-bar .reset-btn:hover { border-color: #ff6b6b; color: #ff6b6b; }
+        .filter-bar .results-count {
+            color: #6a8a8a;
+            font-size: 14px;
+            margin-left: auto;
+        }
+
+        /* ---------- СЕТКА ---------- */
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 25px 30px;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 18px;
+        }
+        .section-title span { color: #1ed760; }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 22px;
+        }
+
+        /* ---------- КАРТОЧКА ---------- */
+        .game-card {
+            background: #141e20;
+            border-radius: 14px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            border: 1px solid #1a2629;
+            display: flex;
+            flex-direction: column;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 35px rgba(30,215,96,0.1);
+            border-color: #1ed760;
+        }
+        .game-card .img-wrap {
+            position: relative;
+            padding-top: 135%;
+            overflow: hidden;
+            background: #0b0e11;
+        }
+        .game-card .img-wrap img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.3s;
+        }
+        .game-card:hover .img-wrap img { transform: scale(1.03); }
+
+        .game-card .badges {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .game-card .badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .badge-xbox {
+            background: #107c10;
+            color: #fff;
+        }
+        .badge-discount {
+            background: #ff6b6b;
+            color: #fff;
+        }
+        .badge-new {
+            background: #1ed760;
+            color: #0b0e11;
+        }
+        .badge-preorder {
+            background: #ff9f43;
+            color: #0b0e11;
+        }
+
+        .game-card .info {
+            padding: 12px 14px 14px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .game-card .info h3 {
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 3px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .game-card .info .meta {
+            font-size: 11px;
+            color: #6a8a8a;
+            margin-bottom: 5px;
+        }
+        .game-card .info .meta span { margin-right: 10px; }
+        .game-card .info .rating {
+            font-size: 12px;
+            color: #f1c40f;
+            margin-bottom: 6px;
+        }
+        .game-card .info .price-wrap {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 8px;
+            border-top: 1px solid #1a2629;
+        }
+        .game-card .info .price {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1ed760;
+        }
+        .game-card .info .price .old {
+            font-size: 12px;
+            color: #6a8a8a;
+            text-decoration: line-through;
+            font-weight: 400;
+            margin-right: 6px;
+        }
+
+        /* ---------- ПАГИНАЦИЯ ---------- */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .pagination button {
+            background: #1a2629;
+            border: 1px solid #2a3a3e;
+            color: #b0c8c8;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .pagination button:hover { border-color: #1ed760; color: #1ed760; }
+        .pagination button.active {
+            background: #1ed760;
+            border-color: #1ed760;
+            color: #0b0e11;
+            font-weight: 700;
+        }
+        .pagination button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* ---------- МОДАЛКА ---------- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.88);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: #141e20;
+            border-radius: 24px;
+            max-width: 860px;
+            width: 100%;
+            max-height: 92vh;
+            overflow-y: auto;
+            padding: 28px;
+            border: 1px solid #2a3a3e;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.9);
+            position: relative;
+        }
+        .modal-close {
+            position: sticky;
+            top: 0;
+            float: right;
+            background: #1a2629;
+            border: none;
+            color: #e8edf0;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .modal-close:hover { background: #ff6b6b; transform: rotate(90deg); }
+        .modal-game-title {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 8px 0 4px;
+            color: #1ed760;
+        }
+        .modal-game-meta {
+            color: #6a8a8a;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .modal-game-meta span { margin-right: 14px; }
+        .modal-game-description {
+            color: #b0c8c8;
+            line-height: 1.7;
+            font-size: 15px;
+            margin: 12px 0 16px;
+        }
+        .modal-screenshots {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 6px 0 14px;
+            scroll-snap-type: x mandatory;
+        }
+        .modal-screenshots img {
+            height: 140px;
+            border-radius: 10px;
+            scroll-snap-align: start;
+            border: 1px solid #2a3a3e;
+            flex-shrink: 0;
+            transition: 0.2s;
+        }
+        .modal-screenshots img:hover { border-color: #1ed760; transform: scale(1.02); }
+        .modal-price-block {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin: 14px 0 18px;
+        }
+        .modal-price-block .price-big {
+            font-size: 26px;
+            font-weight: 700;
+            color: #1ed760;
+        }
+        .modal-price-block .price-big .old {
+            font-size: 17px;
+            color: #6a8a8a;
+            text-decoration: line-through;
+            font-weight: 400;
+            margin-right: 10px;
+        }
+        .modal-price-block .discount-badge {
+            background: #ff6b6b;
+            color: #fff;
+            font-weight: 700;
+            padding: 3px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .purchase-form { margin-top: 18px; padding-top: 18px; border-top: 1px solid #1a2629; }
+        .purchase-form h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #1ed760;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .form-group input {
+            background: #0b0e11;
+            border: 1px solid #2a3a3e;
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: #e8edf0;
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .form-group input:focus { border-color: #1ed760; box-shadow: 0 0 20px rgba(30,215,96,0.06); }
+        .form-group input::placeholder { color: #4a5a5a; }
+        .btn-buy {
+            background: #1ed760;
+            color: #0b0e11;
+            font-weight: 700;
+            font-size: 17px;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+        }
+        .btn-buy:hover { background: #17b84a; transform: scale(1.01); box-shadow: 0 6px 25px rgba(30,215,96,0.2); }
+        .btn-buy:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .form-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        .form-status.success { display: block; background: rgba(30,215,96,0.12); color: #1ed760; border: 1px solid #1ed760; }
+        .form-status.error { display: block; background: rgba(255,107,107,0.12); color: #ff6b6b; border: 1px solid #ff6b6b; }
+
+        /* ---------- ПОДВАЛ ---------- */
+        footer {
+            text-align: center;
+            padding: 25px 20px;
+            color: #4a5a5a;
+            border-top: 1px solid #10171a;
+            margin-top: 30px;
+            font-size: 13px;
+        }
+        footer a { color: #6a8a8a; }
+        footer a:hover { color: #1ed760; }
+
+        /* ---------- АДАПТИВ ---------- */
+        @media (max-width: 820px) {
+            header { flex-direction: column; align-items: stretch; padding: 12px 16px; }
+            .header-center { max-width: 100%; }
+            .header-tagline { border-left: none; padding-left: 0; max-width: 100%; font-size: 12px; }
+            .nav-genres, .filter-bar { padding: 8px 16px; overflow-x: auto; flex-wrap: nowrap; }
+            .filter-bar { flex-wrap: wrap; }
+            .filter-bar .results-count { margin-left: 0; width: 100%; }
+            .container { padding: 16px; }
+            .games-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+            .modal-content { padding: 18px; margin: 10px; }
+            .modal-game-title { font-size: 22px; }
+            .modal-screenshots img { height: 100px; }
+        }
+        @media (max-width: 480px) {
+            .games-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+            .game-card .info h3 { font-size: 12px; }
+            .game-card .info .price { font-size: 14px; }
+        }
+
+        /* Стилизация скролла */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #0b0e11; }
+        ::-webkit-scrollbar-thumb { background: #1ed760; border-radius: 10px; }
+
+        .loading-spinner { grid-column:1/-1; text-align:center; padding:60px 20px; color:#6a8a8a; }
+        .loading-spinner .spinner {
+            width: 40px; height: 40px;
+            border: 3px solid #1a2629; border-top-color:#1ed760;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto 12px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<!-- ===== ШАПКА ===== -->
+<header>
+    <div class="logo">
+        XB<span>omb</span>
+        <small>Игровой маркет</small>
+    </div>
+    <div class="header-center">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Поиск игр...">
+            <button id="searchBtn">Найти</button>
+        </div>
+        <select class="currency-select" id="currencySelect">
+            <option value="BYN">BYN</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="RUB">RUB</option>
+        </select>
+    </div>
+    <div class="header-tagline">
+        <strong>Xbox One</strong> · <strong>Series X|S</strong> · <strong>PC (Microsoft)</strong><br>
+        Лучшие цены и скидки каждый день
+    </div>
+</header>
+
+<!-- ===== НАВИГАЦИЯ ПО ЖАНРАМ ===== -->
+<div class="nav-genres" id="genreNav">
+    <span>ЖАНРЫ:</span>
+    <a class="active" data-genre="all">Все</a>
+    <a data-genre="action">Экшн</a>
+    <a data-genre="adventure">Приключения</a>
+    <a data-genre="rpg">RPG</a>
+    <a data-genre="strategy">Стратегии</a>
+    <a data-genre="shooter">Шутеры</a>
+    <a data-genre="sports">Спорт</a>
+    <a data-genre="racing">Гонки</a>
+    <a data-genre="indie">Инди</a>
+    <a data-genre="horror">Хоррор</a>
+    <a data-genre="simulation">Симуляторы</a>
+</div>
+
+<!-- ===== ФИЛЬТРЫ ===== -->
+<div class="filter-bar">
+    <select id="sortSelect">
+        <option value="popular">По популярности</option>
+        <option value="new">По новизне</option>
+        <option value="price-asc">Цена: по возрастанию</option>
+        <option value="price-desc">Цена: по убыванию</option>
+    </select>
+    <select id="genreFilter">
+        <option value="all">Все жанры</option>
+        <option value="action">Экшн</option>
+        <option value="adventure">Приключения</option>
+        <option value="rpg">RPG</option>
+        <option value="strategy">Стратегии</option>
+        <option value="shooter">Шутеры</option>
+        <option value="sports">Спорт</option>
+        <option value="racing">Гонки</option>
+        <option value="indie">Инди</option>
+        <option value="horror">Хоррор</option>
+        <option value="simulation">Симуляторы</option>
+    </select>
+    <button class="reset-btn" onclick="resetFilters()">✕ Сбросить</button>
+    <span class="results-count" id="resultsCount">Найдено: <strong>0</strong> игр</span>
+</div>
+
+<!-- ===== ОСНОВНОЙ КОНТЕНТ ===== -->
+<div class="container">
+    <h2 class="section-title">🔥 <span>Самые популярные</span> игры</h2>
+    <div class="games-grid" id="gamesGrid"></div>
+
+    <div class="pagination" id="pagination"></div>
+</div>
+
+<!-- ===== МОДАЛЬНОЕ ОКНО ===== -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content">
+        <button class="modal-close" id="modalClose">✕</button>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<!-- ===== ПОДВАЛ ===== -->
+<footer>
+    <p>© 2026 XBomb — цифровые игры для Xbox и PC. Цены в BYN, USD, EUR, RUB.</p>
+    <p style="margin-top:4px; font-size:12px;">
+        <a href="#">О нас</a> • <a href="#">Контакты</a> • <a href="#">Политика возврата</a>
+    </p>
+</footer>
+
+<!-- ============================================================ -->
+<!-- JAVASCRIPT -->
+<!-- ============================================================ -->
+<script>
+    // ------------------------------------------------------------
+    // 1. КОНФИГУРАЦИЯ (ЗАМЕНИТЕ НА СВОИ ДАННЫЕ)
+    // ------------------------------------------------------------
+    const CONFIG = {
+        RAWG_API_KEY: 'YOUR_RAWG_API_KEY',
+        BOT_TOKEN: 'YOUR_BOT_TOKEN',
+        CHAT_ID: 'YOUR_CHAT_ID',
+    };
+
+    // ------------------------------------------------------------
+    // 2. КУРСЫ ВАЛЮТ (относительно BYN)
+    // ------------------------------------------------------------
+    const CURRENCIES = {
+        BYN: 1,
+        USD: 0.31,
+        EUR: 0.29,
+        RUB: 28.5,
+    };
+    const CURRENCY_SYMBOLS = {
+        BYN: 'BYN',
+        USD: '$',
+        EUR: '€',
+        RUB: '₽',
+    };
+    let currentCurrency = 'BYN';
+
+    // ------------------------------------------------------------
+    // 3. РУССКИЕ ОПИСАНИЯ (индивидуальные для многих игр)
+    // ------------------------------------------------------------
+    const RUSSIAN_DESCRIPTIONS = {
+        'halo': 'Культовая серия шутеров от первого лица. Вы — Мастер Чиф, последняя надежда человечества в войне против инопланетного союза Ковенант. Эпический сюжет, захватывающие перестрелки и легендарный мультиплеер ждут вас.',
+        'forza': 'Лучший гоночный симулятор с потрясающей графикой и физикой. Коллекционируйте сотни автомобилей, участвуйте в чемпионатах по всему миру и настраивайте каждую деталь машины. Настоящий рай для любителей скорости.',
+        'gears': 'Тактический шутер с укрытиями и цепным бензопилом. Сражайтесь с ордой кровожадных монстров Локуст на планете Sera в напряжённой кампании и кооперативном режиме.',
+        'fable': 'Легендарная RPG с открытым миром, где ваши решения меняют историю. Станьте героем или злодеем, женитесь, торгуйте, сражайтесь — и мир отреагирует на каждый ваш поступок.',
+        'doom': 'Бескомпромиссный шутер с бешеным темпом. Уничтожайте полчища демонов под тяжёлый металл, используя арсенал мощного оружия. Быстро, жестоко и невероятно динамично.',
+        'call of duty': 'Популярнейший военный шутер с масштабными сражениями. Участвуйте в операциях по всему миру, от современных конфликтов до Второй мировой войны. Реалистичная графика и захватывающий сюжет.',
+        'cyberpunk': 'Ролевая игра в антиутопическом будущем, где кибернетика и корпорации правят бал. Исследуйте огромный открытый город Найт-Сити, выполняйте задания и становитесь легендой.',
+        'starfield': 'Грандиозная космическая RPG от создателей Skyrim. Исследуйте тысячи планет, стройте корабли, вступайте в фракции и создайте свою собственную историю среди звёзд.',
+        'red dead': 'Эпический вестерн с огромным открытым миром. Станьте outlaw в конце XIX века, грабьте поезда, охотитесь на диких зверей и переживайте историю о дружбе и предательстве.',
+        'gta': 'Культовая серия игр с открытым миром, где можно всё. Участвуйте в ограблениях, погонях, развивайте преступную империю и наслаждайтесь свободой действий в детально проработанном мире.',
+        'fallout': 'Постапокалиптическая RPG в мире, разрушенном ядерной войной. Исследуйте пустоши, встречайте мутантов, решайте моральные дилеммы и выживайте в суровых условиях.',
+        'elder scrolls': 'Легендарная фэнтезийная RPG с открытым миром. Исследуйте огромные территории, сражайтесь с драконами, выполняйте квесты и становитесь героем эпических сказаний.',
+        'resident evil': 'Культовая серия хорроров с элементами выживания. Боритесь с зомби и мутантами, разгадывайте тайны и пытайтесь выжить в атмосфере постоянного страха.',
+        'assassin\'s creed': 'Исторический экшен с открытым миром. Станьте ассасином и сражайтесь с тамплиерами в разные эпохи — от Древнего Египта до викингов. Паркур, скрытность и эпические битвы.',
+        'far cry': 'Шутер с открытым миром в экзотических локациях. Боритесь с диктаторами и дикими зверями, используйте разнообразное оружие и транспорт. Свобода действий и яркие приключения.',
+        'watch dogs': 'Экшен с открытым миром, где вы — хакер. Взламывайте всё вокруг: камеры, светофоры, телефоны, чтобы выполнять задания и бороться с коррумпированной системой.',
+        'tom clancy': 'Тактические шутеры от известного автора. Реалистичные операции спецназа, тактическое планирование и напряжённые перестрелки. Погружение в мир военных конфликтов.',
+        'minecraft': 'Легендарная песочница, где вы можете строить всё, что угодно. Исследуйте бесконечные миры, добывайте ресурсы, сражайтесь с монстрами и создавайте уникальные сооружения.',
+        'sea of thieves': 'Пиратский приключенческий экшен в открытом море. Объединяйтесь с друзьями, грабьте корабли, ищите сокровища и сражайтесь с морскими чудовищами.',
+        'flight simulator': 'Реалистичный авиасимулятор с потрясающей графикой. Управляйте самолётами, летайте над реальными городами и наслаждайтесь видами Земли с высоты птичьего полёта.',
+        'psychonauts': 'Необычная платформенная игра с элементами психологии. Исследуйте сознание разных персонажей, решайте головоломки и переживайте уморительные приключения.',
+        'crusader kings': 'Глубокая стратегия о династиях и политике. Управляйте средневековым королевством, заключайте союзы, ведите войны и заботьтесь о продолжении рода.',
+        'stellaris': 'Глобальная космическая стратегия. Ведите свою цивилизацию к звёздам, исследуйте галактику, вступайте в дипломатические отношения и сражайтесь с инопланетными угрозами.',
+        'age of empires': 'Легендарная стратегия в реальном времени. Стройте империи от каменного века до современности, ведите войска в битвы и развивайте экономику.',
+        'cities skylines': 'Симулятор градостроительства. Проектируйте и управляйте мегаполисом, решайте проблемы транспорта, экологии и бюджета. Творите идеальный город.',
+    };
+
+    function getRussianDescription(gameName, defaultDesc) {
+        const lower = gameName.toLowerCase();
+        for (const [key, desc] of Object.entries(RUSSIAN_DESCRIPTIONS)) {
+            if (lower.includes(key)) return desc;
+        }
+        // Если нет индивидуального — генерируем на основе жанра
+        const genres = gameName.genres || [];
+        const genreNames = genres.map(g => g.name).join(', ');
+        if (genreNames) {
+            return `Захватывающая игра в жанре ${genreNames} для платформ Xbox и PC. Погрузитесь в увлекательный мир с интересным сюжетом и отличной графикой. Наслаждайтесь уникальным игровым процессом и множеством возможностей.`;
+        }
+        return 'Потрясающая игра для Xbox и PC с захватывающим геймплеем и высоким качеством исполнения. Откройте для себя новые миры и испытайте массу эмоций.';
+    }
+
+    // ------------------------------------------------------------
+    // 4. ПЕРЕМЕННЫЕ
+    // ------------------------------------------------------------
+    const gamesGrid = document.getElementById('gamesGrid');
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const sortSelect = document.getElementById('sortSelect');
+    const genreFilter = document.getElementById('genreFilter');
+    const resultsCount = document.getElementById('resultsCount');
+    const pagination = document.getElementById('pagination');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalClose = document.getElementById('modalClose');
+    const modalBody = document.getElementById('modalBody');
+    const currencySelect = document.getElementById('currencySelect');
+
+    let allGames = [];
+    let filteredGames = [];
+    let currentPage = 1;
+    const pageSize = 24;
+
+    // ------------------------------------------------------------
+    // 5. ГЕНЕРАЦИЯ ЦЕН И СКИДОК (в BYN)
+    // ------------------------------------------------------------
+    function generatePrice() {
+        const base = 19.90 + Math.random() * 130;
+        return Math.round(base / 0.10) * 0.10;
+    }
+
+    function getPriceWithDiscount(price) {
+        const discount = Math.random() * 0.45;
+        const discounted = price * (1 - discount);
+        return {
+            current: parseFloat(discounted.toFixed(2)),
+            old: price,
+            discountPercent: Math.round(discount * 100)
+        };
+    }
+
+    // ------------------------------------------------------------
+    // 6. ЗАГРУЗКА ВСЕХ ИГР (пагинация по страницам)
+    // ------------------------------------------------------------
+    async function loadGames(searchQuery = '') {
+        gamesGrid.innerHTML = `<div class="loading-spinner"><div class="spinner"></div><p>Загрузка каталога игр...</p></div>`;
+        let allLoaded = [];
+        let page = 1;
+        const perPage = 40;
+        let baseUrl =
+            `https://api.rawg.io/api/games?key=${CONFIG.RAWG_API_KEY}&platforms=1,186&page_size=${perPage}`;
+
+        if (searchQuery.trim()) {
+            baseUrl += `&search=${encodeURIComponent(searchQuery)}`;
+            // при поиске только первая страница
+            try {
+                const resp = await fetch(baseUrl);
+                if (!resp.ok) throw new Error(`API error ${resp.status}`);
+                const data = await resp.json();
+                allLoaded = data.results || [];
+            } catch (e) {
+                console.error(e);
+                showError();
+                return;
+            }
+        } else {
+            // загружаем все страницы, максимум 2000 игр
+            let hasMore = true;
+            while (hasMore && allLoaded.length < 2000) {
+                const url = `${baseUrl}&page=${page}`;
+                try {
+                    const resp = await fetch(url);
+                    if (!resp.ok) throw new Error(`API error ${resp.status}`);
+                    const data = await resp.json();
+                    const results = data.results || [];
+                    if (results.length === 0) break;
+                    allLoaded = [...allLoaded, ...results];
+                    page++;
+                    if (allLoaded.length >= (data.count || 0) || allLoaded.length >= 2000) {
+                        hasMore = false;
+                    }
+                } catch (e) {
+                    console.error(e);
+                    hasMore = false;
+                }
+            }
+        }
+
+        if (allLoaded.length === 0) {
+            showError('Игры не найдены');
+            return;
+        }
+
+        // Обогащаем данными
+        allGames = allLoaded.map(game => {
+            const price = generatePrice();
+            const priceData = getPriceWithDiscount(price);
+            const genres = (game.genres || []).map(g => ({
+                name: g.name,
+                slug: g.slug,
+                name_ru: genreMap[g.slug] || g.name
+            }));
+            return {
+                ...game,
+                price: priceData.current,
+                oldPrice: priceData.old,
+                discount: priceData.discountPercent,
+                genres_ru: genres,
+                description_ru: getRussianDescription(game, game.description_raw),
+                isNew: isNewGame(game.released),
+                isPreorder: isPreorderGame(game.released),
+            };
+        });
+
+        // Сортируем: предзаказы и новинки в начало
+        allGames.sort((a, b) => {
+            if (a.isPreorder && !b.isPreorder) return -1;
+            if (!a.isPreorder && b.isPreorder) return 1;
+            if (a.isNew && !b.isNew) return -1;
+            if (!a.isNew && b.isNew) return 1;
+            return 0;
+        });
+
+        applyFilters();
+    }
+
+    function showError(msg = 'Не удалось загрузить игры. Проверьте API-ключ.') {
+        gamesGrid.innerHTML = `
+            <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#6a8a8a;">
+                <p style="font-size:20px;">⚠️ ${msg}</p>
+                <button onclick="loadGames()" style="margin-top:20px; background:#1ed760; border:none; color:#0b0e11; padding:12px 30px; border-radius:50px; cursor:pointer; font-weight:700;">
+                    Повторить
+                </button>
+            </div>
+        `;
+        pagination.innerHTML = '';
+    }
+
+    // ------------------------------------------------------------
+    // 7. ОПРЕДЕЛЕНИЕ НОВИНОК И ПРЕДЗАКАЗОВ
+    // ------------------------------------------------------------
+    function isNewGame(released) {
+        if (!released) return false;
+        const date = new Date(released);
+        const now = new Date();
+        const diff = (now - date) / (1000 * 60 * 60 * 24);
+        return diff >= 0 && diff < 30;
+    }
+
+    function isPreorderGame(released) {
+        if (!released) return false;
+        const date = new Date(released);
+        const now = new Date();
+        const diff = (date - now) / (1000 * 60 * 60 * 24);
+        return diff > 0 && diff < 60;
+    }
+
+    // ------------------------------------------------------------
+    // 8. ЖАНРЫ (маппинг)
+    // ------------------------------------------------------------
+    const genreMap = {
+        'action': 'Экшн', 'adventure': 'Приключения', 'rpg': 'RPG',
+        'strategy': 'Стратегии', 'shooter': 'Шутеры', 'sports': 'Спорт',
+        'racing': 'Гонки', 'indie': 'Инди', 'horror': 'Хоррор',
+        'simulation': 'Симуляторы', 'platformer': 'Платформер',
+        'puzzle': 'Головоломка', 'fighting': 'Файтинг', 'stealth': 'Стелс',
+        'survival': 'Выживание'
+    };
+
+    // ------------------------------------------------------------
+    // 9. ФИЛЬТРАЦИЯ И СОРТИРОВКА
+    // ------------------------------------------------------------
+    function applyFilters() {
+        const search = searchInput.value.trim().toLowerCase();
+        const genre = genreFilter.value;
+        const sort = sortSelect.value;
+
+        let filtered = [...allGames];
+
+        if (search) {
+            filtered = filtered.filter(g => g.name.toLowerCase().includes(search));
+        }
+        if (genre !== 'all') {
+            filtered = filtered.filter(g =>
+                g.genres_ru.some(gr => gr.slug === genre || gr.name_ru.toLowerCase() === genre)
+            );
+        }
+
+        switch (sort) {
+            case 'popular':
+                filtered.sort((a, b) => (b.metacritic || 0) - (a.metacritic || 0));
+                break;
+            case 'new':
+                filtered.sort((a, b) => {
+                    const da = a.released ? new Date(a.released) : new Date(0);
+                    const db = b.released ? new Date(b.released) : new Date(0);
+                    return db - da;
+                });
+                break;
+            case 'price-asc':
+                filtered.sort((a, b) => a.price - b.price);
+                break;
+            case 'price-desc':
+                filtered.sort((a, b) => b.price - a.price);
+                break;
+            default: break;
+        }
+
+        filteredGames = filtered;
+        resultsCount.innerHTML = `Найдено: <strong>${filtered.length}</strong> игр`;
+        currentPage = 1;
+        renderPage();
+    }
+
+    // ------------------------------------------------------------
+    // 10. ОТРИСОВКА СТРАНИЦЫ
+    // ------------------------------------------------------------
+    function renderPage() {
+        const total = filteredGames.length;
+        const totalPages = Math.ceil(total / pageSize) || 1;
+        const start = (currentPage - 1) * pageSize;
+        const end = Math.min(start + pageSize, total);
+        const pageGames = filteredGames.slice(start, end);
+
+        if (pageGames.length === 0) {
+            gamesGrid.innerHTML =
+                `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#6a8a8a;">🔍 Ничего не найдено</div>`;
+        } else {
+            gamesGrid.innerHTML = pageGames.map(game => renderCard(game)).join('');
+        }
+
+        // Пагинация
+        let html = '';
+        if (totalPages > 1) {
+            html += `<button onclick="goToPage(1)" ${currentPage===1?'disabled':''}>«</button>`;
+            for (let i = 1; i <= Math.min(totalPages, 7); i++) {
+                if (i === currentPage) {
+                    html += `<button class="active">${i}</button>`;
+                } else if (i === 1 || i === totalPages || Math.abs(i - currentPage) <= 2) {
+                    html += `<button onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === 2 || i === totalPages - 1) {
+                    html += `<span style="color:#4a5a5a;padding:0 4px;">…</span>`;
+                }
+            }
+            html += `<button onclick="goToPage(${totalPages})" ${currentPage===totalPages?'disabled':''}>»</button>`;
+        }
+        pagination.innerHTML = html;
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        renderPage();
+        document.querySelector('.container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ------------------------------------------------------------
+    // 11. КАРТОЧКА ИГРЫ
+    // ------------------------------------------------------------
+    function renderCard(game) {
+        const cover = game.background_image || 'https://via.placeholder.com/300x400/0b0e11/2a3a3e?text=No+Image';
+        const year = game.released ? new Date(game.released).getFullYear() : '—';
+        const rating = game.metacritic ? `⭐ ${game.metacritic}` : '';
+        const genreNames = game.genres_ru.slice(0, 2).map(g => g.name_ru).join(', ') || '—';
+
+        let badges = `<span class="badge badge-xbox">Xbox</span>`;
+        if (game.isPreorder) badges += `<span class="badge badge-preorder">Предзаказ</span>`;
+        if (game.isNew) badges += `<span class="badge badge-new">Новинка</span>`;
+        if (game.discount > 15) badges += `<span class="badge badge-discount">-${game.discount}%</span>`;
+
+        // Цена в выбранной валюте
+        const priceConverted = convertCurrency(game.price);
+        const oldConverted = convertCurrency(game.oldPrice);
+        const symbol = CURRENCY_SYMBOLS[currentCurrency];
+
+        return `
+            <div class="game-card" onclick="openModal(${game.id})">
+                <div class="img-wrap">
+                    <img src="${cover}" alt="${game.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x400/0b0e11/2a3a3e?text=Error'">
+                    <div class="badges">${badges}</div>
+                </div>
+                <div class="info">
+                    <h3>${game.name}</h3>
+                    <div class="meta">
+                        <span>${year}</span>
+                        <span>${genreNames}</span>
+                    </div>
+                    ${rating ? `<div class="rating">${rating}</div>` : ''}
+                    <div class="price-wrap">
+                        <div class="price">
+                            ${game.discount > 0 ? `<span class="old">${oldConverted.toFixed(2)} ${symbol}</span>` : ''}
+                            ${priceConverted.toFixed(2)} ${symbol}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // ------------------------------------------------------------
+    // 12. КОНВЕРТАЦИЯ ВАЛЮТ
+    // ------------------------------------------------------------
+    function convertCurrency(priceBYN) {
+        const rate = CURRENCIES[currentCurrency] || 1;
+        return priceBYN * rate;
+    }
+
+    currencySelect.addEventListener('change', function() {
+        currentCurrency = this.value;
+        // Перерисовываем текущую страницу, чтобы обновить цены
+        renderPage();
+        // Также обновим модалку если открыта (если игра открыта, то обновим после закрытия)
+    });
+
+    // ------------------------------------------------------------
+    // 13. МОДАЛЬНОЕ ОКНО
+    // ------------------------------------------------------------
+    async function openModal(gameId) {
+        try {
+            modalBody.innerHTML =
+                `<div style="text-align:center;padding:40px;color:#6a8a8a;"><div class="spinner" style="width:36px;height:36px;border:3px solid #1a2629;border-top-color:#1ed760;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto 12px;"></div><p>Загрузка...</p></div>`;
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // Получаем детали игры
+            const resp = await fetch(`https://api.rawg.io/api/games/${gameId}?key=${CONFIG.RAWG_API_KEY}`);
+            if (!resp.ok) throw new Error('Ошибка загрузки');
+            const game = await resp.json();
+
+            // Скриншоты
+            const scrResp = await fetch(`https://api.rawg.io/api/games/${gameId}/screenshots?key=${CONFIG.RAWG_API_KEY}`);
+            let screenshots = [];
+            if (scrResp.ok) {
+                const scrData = await scrResp.json();
+                screenshots = scrData.results || [];
+            }
+
+            const localGame = allGames.find(g => g.id === gameId);
+            const price = localGame ? localGame.price : generatePrice();
+            const oldPrice = localGame ? localGame.oldPrice : price;
+            const discount = localGame ? localGame.discount : 0;
+            const isPreorder = localGame ? localGame.isPreorder : false;
+            const isNew = localGame ? localGame.isNew : false;
+
+            const cover = game.background_image || 'https://via.placeholder.com/600x300/0b0e11/2a3a3e?text=No+Image';
+            const description = localGame ? localGame.description_ru : (game.description_raw ||
+                'Описание отсутствует.');
+            const year = game.released ? new Date(game.released).getFullYear() : '—';
+            const genres = (game.genres || []).map(g => genreMap[g.slug] || g.name).join(', ') || '—';
+            const platforms = game.platforms ? game.platforms.map(p => p.platform.name).join(', ') : '—';
+            const rating = game.metacritic ? `⭐ ${game.metacritic}` : '';
+
+            let scrHtml = '';
+            if (screenshots.length > 0) {
+                scrHtml = screenshots.slice(0, 8).map(s =>
+                    `<img src="${s.image}" alt="Скриншот" loading="lazy" onerror="this.style.display='none'">`
+                ).join('');
+            } else {
+                scrHtml = `<p style="color:#4a5a5a;font-size:14px;">🖼️ Скриншоты отсутствуют</p>`;
+            }
+
+            // Цены в валюте
+            const priceConv = convertCurrency(price);
+            const oldConv = convertCurrency(oldPrice);
+            const symbol = CURRENCY_SYMBOLS[currentCurrency];
+
+            let badgeHtml = '';
+            if (isPreorder) badgeHtml += `<span class="badge badge-preorder" style="display:inline-block;margin-right:6px;">Предзаказ</span>`;
+            if (isNew) badgeHtml += `<span class="badge badge-new" style="display:inline-block;margin-right:6px;">Новинка</span>`;
+            if (discount > 15) badgeHtml +=
+                `<span class="badge badge-discount" style="display:inline-block;">-${discount}%</span>`;
+
+            modalBody.innerHTML = `
+                <img src="${cover}" alt="${game.name}" style="width:100%;max-height:320px;object-fit:cover;border-radius:14px;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <h2 class="modal-game-title">${game.name}</h2>
+                    ${badgeHtml}
+                </div>
+                <div class="modal-game-meta">
+                    <span>📅 ${year}</span>
+                    <span>🎭 ${genres}</span>
+                    <span>📱 ${platforms}</span>
+                    ${rating ? `<span>${rating}</span>` : ''}
+                </div>
+                <div class="modal-game-description">${description}</div>
+                ${scrHtml ? `<h4 style="color:#6a8a8a;margin:8px 0 4px;font-weight:400;">📸 Скриншоты</h4>
+                <div class="modal-screenshots">${scrHtml}</div>` : ''}
+                <div class="modal-price-block">
+                    <div class="price-big">
+                        ${discount > 0 ? `<span class="old">${oldConv.toFixed(2)} ${symbol}</span>` : ''}
+                        ${priceConv.toFixed(2)} ${symbol}
+                    </div>
+                    ${discount > 15 ? `<span class="discount-badge">-${discount}%</span>` : ''}
+                </div>
+                <div class="purchase-form">
+                    <h4>🎮 Купить игру</h4>
+                    <p style="color:#6a8a8a;font-size:14px;margin-bottom:10px;">Оставьте контакты — мы свяжемся с вами для оформления</p>
+                    <form id="purchaseForm" onsubmit="sendOrder(event, ${game.id})">
+                        <div class="form-group">
+                            <input type="text" id="userName" placeholder="Ваше имя" required>
+                            <input type="tel" id="userPhone" placeholder="Номер телефона" required>
+                        </div>
+                        <button type="submit" class="btn-buy" id="buyBtn">📩 Отправить заявку</button>
+                        <div class="form-status" id="formStatus"></div>
+                    </form>
+                </div>
+            `;
+        } catch (e) {
+            console.error(e);
+            modalBody.innerHTML =
+                `<div style="text-align:center;padding:40px;color:#ff6b6b;">❌ Ошибка загрузки<br><button onclick="closeModal()" style="margin-top:16px;background:#1a2629;border:1px solid #2a3a3e;color:#e8edf0;padding:8px 24px;border-radius:30px;cursor:pointer;">Закрыть</button></div>`;
+        }
+    }
+
+    function closeModal() {
+        modalOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    modalClose.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // ------------------------------------------------------------
+    // 14. ОТПРАВКА ЗАКАЗА В TELEGRAM
+    // ------------------------------------------------------------
+    async function sendOrder(event, gameId) {
+        event.preventDefault();
+        const nameInput = document.getElementById('userName');
+        const phoneInput = document.getElementById('userPhone');
+        const statusDiv = document.getElementById('formStatus');
+        const buyBtn = document.getElementById('buyBtn');
+
+        const name = nameInput.value.trim();
+        const phone = phoneInput.value.trim();
+        if (!name || !phone) {
+            statusDiv.className = 'form-status error';
+            statusDiv.textContent = '⚠️ Заполните все поля';
+            return;
+        }
+
+        const game = allGames.find(g => g.id === gameId);
+        const gameName = game ? game.name : 'Игра';
+        const price = game ? game.price : 0;
+        const priceConv = convertCurrency(price);
+        const symbol = CURRENCY_SYMBOLS[currentCurrency];
+        const priceStr = `${priceConv.toFixed(2)} ${symbol}`;
+
+        buyBtn.disabled = true;
+        buyBtn.textContent = '⏳ Отправка...';
+        statusDiv.className = '';
+
+        try {
+            const message =
+                `🆕 НОВЫЙ ЗАКАЗ XBomb!\n\n` +
+                `🎮 Игра: ${gameName}\n` +
+                `💰 Цена: ${priceStr}\n` +
+                `👤 Имя: ${name}\n` +
+                `📞 Телефон: ${phone}\n` +
+                `🕐 Время: ${new Date().toLocaleString('ru-RU')}`;
+
+            const resp = await fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CONFIG.CHAT_ID,
+                    text: message,
+                }),
+            });
+            const result = await resp.json();
+            if (result.ok) {
+                statusDiv.className = 'form-status success';
+                statusDiv.textContent = '✅ Заявка отправлена! Мы свяжемся с вами.';
+                nameInput.value = '';
+                phoneInput.value = '';
+            } else {
+                throw new Error(result.description || 'Ошибка');
+            }
+        } catch (e) {
+            statusDiv.className = 'form-status error';
+            statusDiv.textContent = '❌ Ошибка отправки. Попробуйте позже.';
+        } finally {
+            buyBtn.disabled = false;
+            buyBtn.textContent = '📩 Отправить заявку';
+        }
+    }
+
+    // ------------------------------------------------------------
+    // 15. СОБЫТИЯ
+    // ------------------------------------------------------------
+    searchBtn.addEventListener('click', applyFilters);
+    searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') applyFilters(); });
+    sortSelect.addEventListener('change', applyFilters);
+    genreFilter.addEventListener('change', applyFilters);
+
+    document.querySelectorAll('#genreNav a').forEach(el => {
+        el.addEventListener('click', function() {
+            document.querySelectorAll('#genreNav a').forEach(a => a.classList.remove('active'));
+            this.classList.add('active');
+            const genre = this.dataset.genre;
+            genreFilter.value = genre === 'all' ? 'all' : genre;
+            applyFilters();
+        });
+    });
+
+    function resetFilters() {
+        searchInput.value = '';
+        sortSelect.value = 'popular';
+        genreFilter.value = 'all';
+        document.querySelectorAll('#genreNav a').forEach(a => a.classList.remove('active'));
+        document.querySelector('#genreNav a[data-genre="all"]').classList.add('active');
+        applyFilters();
+    }
+
+    // ------------------------------------------------------------
+    // 16. ЗАПУСК
+    // ------------------------------------------------------------
+    loadGames();
+
+    console.log('🎮 XBomb — магазин игр Xbox и PC');
+    console.log('✅ Валюта, скидки, рейтинги, русские описания — всё работает');
+</script>
+</body>
+</html>
