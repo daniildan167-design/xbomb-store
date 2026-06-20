@@ -694,20 +694,19 @@
         'cities skylines': 'Симулятор градостроительства. Проектируйте и управляйте мегаполисом, решайте проблемы транспорта, экологии и бюджета. Творите идеальный город.',
     };
 
-    function getRussianDescription(gameName, defaultDesc) {
-        const lower = gameName.toLowerCase();
-        for (const [key, desc] of Object.entries(RUSSIAN_DESCRIPTIONS)) {
-            if (lower.includes(key)) return desc;
-        }
-        // Если нет индивидуального — генерируем на основе жанра
-        const genres = gameName.genres || [];
-        const genreNames = genres.map(g => g.name).join(', ');
-        if (genreNames) {
-            return `Захватывающая игра в жанре ${genreNames} для платформ Xbox и PC. Погрузитесь в увлекательный мир с интересным сюжетом и отличной графикой. Наслаждайтесь уникальным игровым процессом и множеством возможностей.`;
-        }
-        return 'Потрясающая игра для Xbox и PC с захватывающим геймплеем и высоким качеством исполнения. Откройте для себя новые миры и испытайте массу эмоций.';
+    function getRussianDescription(game) {
+    const name = game.name || '';
+    const lower = name.toLowerCase();
+    for (const [key, desc] of Object.entries(RUSSIAN_DESCRIPTIONS)) {
+        if (lower.includes(key)) return desc;
     }
-
+    // Если нет индивидуального, генерируем на основе жанров
+    const genres = (game.genres || []).map(g => g.name).join(', ');
+    if (genres) {
+        return `Захватывающая игра в жанре ${genres} для платформ Xbox и PC. Погрузитесь в увлекательный мир с интересным сюжетом и отличной графикой. Наслаждайтесь уникальным игровым процессом и множеством возможностей.`;
+    }
+    return 'Потрясающая игра для Xbox и PC с захватывающим геймплеем и высоким качеством исполнения. Откройте для себя новые миры и испытайте массу эмоций.';
+}
     // ------------------------------------------------------------
     // 4. ПЕРЕМЕННЫЕ
     // ------------------------------------------------------------
